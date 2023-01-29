@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Project, Pledge
+from users.serializers import CustomUserSerializer
 
 class ProjectSerializer(serializers.Serializer):
     id = serializers.ReadOnlyField()
@@ -10,6 +11,7 @@ class ProjectSerializer(serializers.Serializer):
     is_open = serializers.BooleanField()
     date_created = serializers.DateTimeField()
     owner = serializers.ReadOnlyField(source='owner.id')
+    total = serializers.ReadOnlyField()   #see project total
 
     
     def create (self,validated_data ):
@@ -22,6 +24,7 @@ class PledgeSerializer(serializers.ModelSerializer):
         read_only_fields = ['id','supporter']
 class ProjectDetailSerializer(ProjectSerializer):
     pledges = PledgeSerializer(many=True, read_only=True)
+    liked_by = CustomUserSerializer (many=True, read_only=True)
 
     def update(self,instance,validated_data):
         instance.title = validated_data.get('title',instance.title)

@@ -20,12 +20,9 @@ class ProjectList(APIView):
         serializer = ProjectSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(owner=request.user)
-        return Response(serializer.data,
+            return Response(serializer.data,
         status = status.HTTP_201_CREATED)
-        return Response(
-            serializer.errors,
-           status=status.HTTP_400_BAD_REQUEST 
-        )
+        return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ProjectDetail(APIView):
     permission_classes = [
@@ -63,3 +60,28 @@ class PledgeList(generics.ListCreateAPIView):
     
     def perform_create(self, serializer):
         serializer.save(supporter=self.request.user)
+
+class PledgeDetail (generics.RetrieveUpdateDestroyAPIView):
+    queryset = Pledge.objects.all()
+    serializer_class = PledgeSerializer
+
+
+# class LikePostView(APIView):
+    """Api view for liking a post if logged in."""
+    # authentication_classes = [authentication.TokenAuthentication]
+    # permission_classes = [permissions.IsAuthenticated]
+
+    # def put(self, request, id, format=None):
+    #     user = request.user
+    #     try:
+    #         post = ImagePost.objects.get(pk=id)
+    #     except ImagePost.DoesNotExist:
+    #         return Response(status=status.HTTP_404_NOT_FOUND)
+    #     if post.likes.filter(pk=request.user.pk).exists():
+    #         post.likes.remove(request.user)
+    #     else:
+    #         post.likes.add(request.user)
+    # #         if user != post.user:
+    #             notify.send(user, recipient=post.user,
+    #                         verb=f"{user.username} liked your post.")
+    #     return Response(status=status.HTTP_200_OK)
